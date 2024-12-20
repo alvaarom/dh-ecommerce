@@ -4,6 +4,7 @@ import styles from "./Home.module.css";
 import { CardProduct } from "../../components/ui/CardProduct/CardProduct";
 import { getProducts } from "../../service";
 import { Product } from "../../interface";
+import { Toaster } from "sonner";
 
 export const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,6 +27,7 @@ export const Home = () => {
   return (
     <>
       <Hero />
+      <Toaster richColors />
       {isLoading && <p>Loading...</p>}
       {error && <p>There was an error</p>}
       <div className={styles.container}>
