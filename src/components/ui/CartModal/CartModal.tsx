@@ -1,33 +1,18 @@
 import styles from "./CartModal.module.css";
 import Close from "../../../assets/close.svg";
 import { FC } from "react";
-import useCartContext from "../../../hooks/useCartContext";
-import { CartProduct } from "../../../interface";
+import { Table } from "../Table/Table";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   handleShowCartModal: () => void;
 }
 
 export const CartModal: FC<Props> = ({ handleShowCartModal }) => {
-  const {
-    state: { cartItems },
-    dispatch,
-  } = useCartContext();
-
-  const removeToCart = (item: CartProduct) => {
-    dispatch({ type: "REMOVE_FROM_CART", payload: item });
-  };
-
-  const addToCart = (item: CartProduct) => {
-    dispatch({ type: "ADD_TO_CART", payload: item });
-  };
-
-  const totalPay = () => {
-    const total = cartItems.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-    return total;
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate("/checkout");
+    handleShowCartModal();
   };
 
   return (
@@ -35,39 +20,9 @@ export const CartModal: FC<Props> = ({ handleShowCartModal }) => {
       <button className={styles.modalCloseButton} onClick={handleShowCartModal}>
         <img src={Close} alt="Close" />
       </button>
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Delete</th>
-            <th>Quantity</th>
-            <th>Add</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cartItems.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <p>{item.name}</p>
-              </td>
-              <td>
-                <button onClick={() => removeToCart(item)}>-1</button>
-              </td>
-              <td>
-                <p>{item.quantity}</p>
-              </td>
-              <td>
-                <button onClick={() => addToCart(item)}>+1</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div>
-        <h3>Total: ${totalPay()}</h3>
-      </div>
+      <Table />
       <div className={styles.modalButtonContainer}>
-        <button>Checkout</button>
+        <button onClick={handleNavigate}>Checkout</button>
       </div>
     </div>
   );
