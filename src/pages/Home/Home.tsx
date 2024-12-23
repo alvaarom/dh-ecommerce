@@ -3,30 +3,17 @@ import styles from "./Home.module.css";
 import { CardProduct } from "../../components/ui/CardProduct/CardProduct";
 import { getProducts } from "../../service";
 import { Toaster } from "sonner";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export const Home = () => {
+  const [page, setPage] = useState(1);
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ["products"],
-    queryFn: getProducts,
+    queryKey: ["products", page],
+    queryFn: () => getProducts(page),
+    placeholderData: keepPreviousData,
   });
-
-  // const [products, setProducts] = useState<Product[]>([]);
-  // const [error, setError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-
-  // useEffect(() => {
-  //   getProducts()
-  //     .then((data) => {
-  //       setProducts(data);
-  //     })
-  //     .catch(() => {
-  //       setError(true);
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // }, []);
 
   return (
     <>
@@ -35,9 +22,27 @@ export const Home = () => {
       {isLoading && <p>Loading...</p>}
       {error && <p>There was an error</p>}
       <div className={styles.container}>
-        {data?.map((product) => (
+        {data?.data?.map((product) => (
           <CardProduct key={product.tail} product={product} />
         ))}
+      </div>
+      <div className={styles.paginationContainer}>
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          className={styles.paginationButton}
+        >
+          Prev page
+        </button>
+        <div className={styles.paginationActive}>
+          <span>{page}</span>
+        </div>
+        <button
+          onClick={() => setPage(page + 1)}
+          className={styles.paginationButton}
+        >
+          Next page
+        </button>
       </div>
     </>
   );
